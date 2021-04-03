@@ -3,21 +3,22 @@ package Cryptogram;
 import java.io.*;
 import java.util.HashMap;
 
-public class Players {
+public class Players implements IPlayers {
 
     final private HashMap<String, Player> allPlayers;
     final private File playersFile;
 
     public Players(String path) throws IOException {
-        this.playersFile = new File(getClass().getResource(path).getPath());
+        this.playersFile = new File(path);
         this.playersFile.createNewFile();
         this.allPlayers = getPlayersFromFile();
     }
 
     public Players() throws IOException {
-        this("player_data.txt");
+        this("PlayerFiles/player_data.txt");
     }
 
+    @Override
     public void addPlayer(String username) {
         if (!allPlayers.containsKey(username)) {
             Player player = new Player(username);
@@ -25,6 +26,7 @@ public class Players {
         }
     }
 
+    @Override
     public Player getPlayer(String username) {
         return allPlayers.getOrDefault(username, null);
     }
@@ -51,6 +53,7 @@ public class Players {
         return players;
     }
 
+    @Override
     public void savePlayers() {
 
         try {
@@ -77,6 +80,7 @@ public class Players {
 
     }
 
+    @Override
     public HashMap<Player, Integer> getAllPlayersCompletedGames() {
         HashMap<Player, Integer> gamesCompleted = new HashMap<>();
         for (Player player : allPlayers.values()) {

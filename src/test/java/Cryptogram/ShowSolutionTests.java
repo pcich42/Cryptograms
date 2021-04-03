@@ -14,7 +14,7 @@ public class ShowSolutionTests {
         assertDoesNotThrow(() -> game = new Game("abc"));
         assertDoesNotThrow(() -> game.generateCryptogram("letters"));
 
-        game.showSolution();
+        game.fillSolution();
         Assertions.assertEquals(game.getCurrentSolution(), game.getCryptogram().getCryptogramAlphabet());
 
     }

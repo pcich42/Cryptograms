@@ -88,7 +88,7 @@ class TrackPlayerStatsTests {
         assertDoesNotThrow(() -> game.saveGameToFile(true));
         assertDoesNotThrow(() -> game.generateCryptogram("letters"));
         Assertions.assertEquals(2, game.getPlayer().getCryptogramsPlayed());
-        assertDoesNotThrow(() -> game.loadCryptogram());
+        assertDoesNotThrow(() -> game.loadGame());
         Assertions.assertEquals(2, game.getPlayer().getCryptogramsPlayed());
 
         File file = new File("Resources/PlayerGameFiles/"+username+"Game.txt");

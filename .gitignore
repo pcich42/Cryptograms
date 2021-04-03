@@ -1,8 +1,5 @@
 .idea
 out
+PlayerFiles
 sample_soln_CLASSDIAGRAM.png
 user_stories_sample_soln_with_acceptance_tests.pdf
-src/main/resources/PlayerGameFiles/*
-src/test/resources/PlayerGameFiles/*
-src/main/resources/player_data.txt
-src/test/resources/player_data.txt

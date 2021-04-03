@@ -27,7 +27,7 @@ public class LoadACryptogramTests {
         assertDoesNotThrow(() -> game.saveGameToFile(true));
         assertTrue(file.exists());
         // when the player wants to load the game it is loaded
-        assertDoesNotThrow(() -> game.loadCryptogram());
+        assertDoesNotThrow(() -> game.loadGame());
 
         if (file.exists()) {
             file.delete();
@@ -42,7 +42,7 @@ public class LoadACryptogramTests {
         // when a player hasn't saved any game yet
         // when they want to load a game
         // error message is show (exception handled in view)
-        assertThrows(java.io.IOException.class, () -> game.loadCryptogram());
+        assertThrows(java.io.IOException.class, () -> game.loadGame());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class LoadACryptogramTests {
             fail();
         }
 
-        assertThrows(IllegalStateException.class, () -> game.loadCryptogram());
+        assertThrows(IllegalStateException.class, () -> game.loadGame());
 
         if (file.exists()) {
             file.delete();
