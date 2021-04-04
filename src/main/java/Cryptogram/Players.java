@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class Players implements IPlayers {
 
-    final private HashMap<String, Player> allPlayers;
+    protected HashMap<String, Player> allPlayers;
     final private File playersFile;
 
     public Players(String path) throws IOException {

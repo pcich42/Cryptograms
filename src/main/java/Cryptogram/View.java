@@ -5,15 +5,15 @@ import java.util.*;
 /**
  * The class responsible for user interaction - getting input and commands from the player
  */
-public class View {
+public class View implements IView {
 
-    private final Scanner scanner;
+    protected Scanner scanner;
 
     /**
      * Constructor for Cryptogram.View class
      */
-    public View(Scanner scanner) {
-        this.scanner = scanner;
+    public View() {
+        this.scanner = new Scanner(System.in);
     }
 
     /**
@@ -21,51 +21,10 @@ public class View {
      *
      * @return Array of string tokens generated from players input
      */
+    @Override
     public String[] getInput() {
         String line = scanner.nextLine().toLowerCase();
         return line.split(" ");
-    }
-
-    /**
-     * Method to display the current solution and encrypted phrase
-     */
-    public void displayCryptogram(Cryptogram cryptogram) {
-        System.out.println();
-
-        String decryptedPhrase = "";
-        String encryptedPhrase = "";
-
-        for (char value : cryptogram.getPhrase().toCharArray()) {
-            if (value == ' ') {
-                decryptedPhrase = decryptedPhrase.concat(" ");
-                encryptedPhrase = encryptedPhrase.concat(" ");
-            } else {
-                // get length of the key and add that many spaces
-                String correctKey = cryptogram.getCryptogramAlphabet().get(String.valueOf(value));
-                String decryptedValue = "";
-                if (cryptogram.getSolution().containsValue(correctKey)) {
-                    for (String key : cryptogram.getSolution().keySet())
-                        if (cryptogram.getSolution().get(key).equals(correctKey)) {
-                            decryptedValue = key;
-                        }
-                } else {
-                    decryptedValue = "_";
-                }
-
-                String encryptedValue = cryptogram.getCryptogramAlphabet().get(String.valueOf(value));
-                if (encryptedValue.length() == 2) {
-                    decryptedPhrase = decryptedPhrase.concat(" ");
-                }
-                decryptedPhrase = decryptedPhrase.concat(decryptedValue);
-                encryptedPhrase = encryptedPhrase.concat(encryptedValue);
-            }
-            decryptedPhrase = decryptedPhrase.concat(" ");
-            encryptedPhrase = encryptedPhrase.concat(" ");
-        }
-
-        System.out.println(decryptedPhrase);
-        System.out.println(encryptedPhrase);
-
     }
 
     /**
@@ -73,6 +32,7 @@ public class View {
      *
      * @return true if user confirms, false if they don't
      */
+    @Override
     public boolean confirmChoice() {
 
         boolean answer;
@@ -98,6 +58,7 @@ public class View {
      *
      * @return inputted username
      */
+    @Override
     public String promptForUsername() {
         System.out.println("Welcome to the cryptogram game!\n" +
                 "Please enter your name: ");

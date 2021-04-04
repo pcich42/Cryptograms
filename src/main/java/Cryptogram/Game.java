@@ -9,13 +9,13 @@ class Game {
     private Player player;
     private final IPlayers playerList;
     private Cryptogram cryptogram;
-    private final View view;
+    private final IView view;
     private final ICryptogramManager manager;
     private final Map<String, Function<String[], Boolean>> commands;
 
-    public Game(IPlayers Players, ICryptogramManager manager,Scanner scanner) {
+    public Game(IPlayers Players, ICryptogramManager manager, IView view) {
         this.commands = getCommands();
-        this.view = new View(scanner);
+        this.view = view;
         this.playerList = Players;
         this.manager = manager;
     }
@@ -41,8 +41,6 @@ class Game {
 
     public void play() {
 
-        setupGame();
-
         displayHelp(new String[0]);
         while (true) {
             view.displayCryptogram(cryptogram);
@@ -60,7 +58,7 @@ class Game {
         }
     }
 
-    private void setupGame() {
+    public void setup() {
         String username = view.promptForUsername();
         this.player = playerList.getPlayer(username);
         if (player == null) {
@@ -110,17 +108,8 @@ class Game {
         return player;
     }
 
-    /**
-     * A method called in constructor. Generates a new cryptogram to play
-     * @param type The type of the cryptogram ("letters" for letters and "numbers" for numbers), if neither matches
-     *                  it tries to load from file
-     */
-    public void generateCryptogram(String type) throws IOException {
-        // while generating a new cryptogram when already playing new solution needs to be created
-        int index = (new Random()).nextInt(15)+1;
-        String path = "quote" + index + ".txt";
-        cryptogram = manager.generateCryptogram(type, path);
-        player.incrementCryptogramsPlayed();
+    public IView getView() {
+        return view;
     }
 
     /**
@@ -134,7 +123,7 @@ class Game {
             if (cryptogram.isAlreadyMapped(valueToMap)) {
                 System.out.println(">> This value is already mapped to. Do you want to override this mapping?");
                 if(view.confirmChoice()){
-                    cryptogram.mapLetters(guess, valueToMap);
+                    cryptogram.remapLetters(guess, valueToMap);
                     player.updateAccuracy(cryptogram.isGuessCorrect(guess, valueToMap));
                 }
             } else {
@@ -150,7 +139,7 @@ class Game {
      *
      * @return true if game has been finished, false otherwise
      */
-    private boolean isGameFinishedRoutine() {
+    public boolean isGameFinishedRoutine() {
         if (cryptogram.isSolutionFull()) {
             if(cryptogram.isSolutionCorrect()) {
                 // player won
@@ -177,7 +166,7 @@ class Game {
      * @param input = input from the user
      * @return returns true if input is valid and ready to be passed to enterLetter
      */
-    private boolean isInputValid(String[] input) {
+    public boolean isInputValid(String[] input) {
         if (!(input.length == 2 &&
                 input[0].length() == 1 &&
                 (input[1].length() == 1 || input[1].length() == 2))) {
@@ -231,7 +220,7 @@ class Game {
         return false;
     }
 
-    private boolean saveGame(String[] input) {
+    public boolean saveGame(String[] input) {
         String path = player.getUsername() + "Game.txt";
 
         if (manager.fileAlreadyExists(path)) {
@@ -245,7 +234,7 @@ class Game {
         return false;
     }
 
-    private boolean generateNewCryptogram(String[] input) {
+    public boolean generateNewCryptogram(String[] input) {
         int index = (new Random()).nextInt(15) + 1;
         String path = "quote" + index + ".txt";
         if (input.length != 2) {
@@ -266,6 +255,7 @@ class Game {
      * Shows hints by how common they are in the english language
      */
     public boolean hint(String[] input) {
+        //TODO: simplify
         String[] commonLetters = cryptogram.getCryptogramAlphabet().keySet().toArray(new String[0]); // all used letters in the cryptogram
         for (String letter : commonLetters) {
             if (cryptogram.isLetterAlreadyUsed(letter)) { //Checks if letter is used
@@ -284,7 +274,7 @@ class Game {
         return true;
     }
 
-    private Boolean showScoreboard(String[] input) {
+    public Boolean showScoreboard(String[] input) {
         HashMap<Player, Integer> gamesCompleted = playerList.getAllPlayersCompletedGames();
         ArrayList<Map.Entry<Player, Integer>> scoreboardToSort = new ArrayList<>(gamesCompleted.entrySet());
         scoreboardToSort.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
@@ -313,7 +303,7 @@ class Game {
         return false;
     }
 
-    private Boolean showSolution(String[] strings) {
+    public Boolean showSolution(String[] strings) {
 
         cryptogram.fillSolution();
         view.displayCryptogram(cryptogram);
@@ -323,7 +313,7 @@ class Game {
 
     }
 
-    private Boolean showFrequencies(String[] strings) {
+    public Boolean showFrequencies(String[] strings) {
         System.out.println("The frequencies of letters in English language are as follows:");
         System.out.println(Cryptogram.getEnglishFrequencies());
         System.out.println("Current cryptogram has the following frequencies:");
@@ -338,7 +328,7 @@ class Game {
      * @param input user input - needed for all commands
      * @return always false
      */
-    public boolean displayHelp(String[] input) {
+    private boolean displayHelp(String[] input) {
         System.out.println("Here are all available commands:");
         System.out.println("<guess> <encrypted value>:              To map a letter.");
         System.out.println("undo <guessed letter to be removed>:    To undo a mapping.");

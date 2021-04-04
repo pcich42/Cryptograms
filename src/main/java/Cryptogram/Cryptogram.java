@@ -196,6 +196,17 @@ public class Cryptogram {
         return frequenciesFormatted.toString();
     }
 
+    public String getLetter(String value) {
+        if(solution.containsValue(value)){
+            for(String key : solution.keySet()) {
+                if (solution.get(key).equals(value)) {
+                    return key;
+                }
+            }
+        }
+        return null;
+    }
+
     public static String getEnglishFrequencies() {
         return  "a:8.12, b:1.49, c:2.71, d:4.32, e:12.02, f:2.30,\n" +
                 "g:2.03, h:5.92, i:7.31, j:0.10, k:0.69, l:3.98,\n" +
