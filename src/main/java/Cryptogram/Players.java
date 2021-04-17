@@ -2,10 +2,12 @@ package Cryptogram;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Players implements IPlayers {
 
-    protected HashMap<String, Player> allPlayers;
+    protected Map<String, Player> allPlayers;
     final private File playersFile;
 
     public Players(String path) throws IOException {
@@ -15,7 +17,7 @@ public class Players implements IPlayers {
     }
 
     public Players() throws IOException {
-        this("PlayerFiles/player_data.txt");
+        this("GameFiles/player_data.txt");
     }
 
     @Override
@@ -28,7 +30,7 @@ public class Players implements IPlayers {
 
     @Override
     public Player getPlayer(String username) {
-        return allPlayers.getOrDefault(username, null);
+        return allPlayers.get(username);
     }
 
     private HashMap<String, Player> getPlayersFromFile() throws IOException {
@@ -54,7 +56,7 @@ public class Players implements IPlayers {
     }
 
     @Override
-    public void savePlayers() {
+    public void savePlayerDetails() {
 
         try {
             PrintWriter writer = new PrintWriter(playersFile);
@@ -81,13 +83,13 @@ public class Players implements IPlayers {
     }
 
     @Override
-    public HashMap<Player, Integer> getAllPlayersCompletedGames() {
-        HashMap<Player, Integer> gamesCompleted = new HashMap<>();
-        for (Player player : allPlayers.values()) {
-            if (player.getCryptogramsCompleted() != 0)
-                gamesCompleted.put(player, player.getCryptogramsCompleted());
-        }
-        return gamesCompleted;
+    public Map<Player, Integer> getAllPlayersCompletedGames() {
+        return allPlayers.values()
+                .stream()
+                .filter(player -> player.getCryptogramsCompleted() != 0)
+                .collect(Collectors.toMap(
+                        (Player player) -> player,
+                        (Player player) -> player.getCryptogramsCompleted()));
     }
 
 }

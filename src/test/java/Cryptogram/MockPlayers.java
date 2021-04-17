@@ -3,7 +3,7 @@ package Cryptogram;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class MockPlayers extends Players implements IPlayers {
+public class MockPlayers extends Players {
 
     public MockPlayers() throws IOException {
         allPlayers = new HashMap<>();
@@ -11,5 +11,5 @@ public class MockPlayers extends Players implements IPlayers {
     }
 
     @Override
-    public void savePlayers() {}
+    public void savePlayerDetails() {}
 }

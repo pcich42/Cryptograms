@@ -2,7 +2,7 @@ package Cryptogram;
 
 import java.util.HashMap;
 
-public class MockManager extends CryptogramManager implements ICryptogramManager {
+public class MockManager extends CryptogramManager {
 
     String phrase = "test";
 

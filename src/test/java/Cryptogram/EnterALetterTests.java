@@ -6,33 +6,30 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EnterALetterTests {
 
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
-    private static MockView view;
-    private static Game game;
+    private Game game;
     private static MockPlayers players;
     private static MockManager manager;
+    private InputPrompt prompt;
 
     @BeforeAll
     static void setup() {
-        try {
-            players = new MockPlayers();
-            manager = new MockManager();
-            view = new MockView("");
-        } catch (IOException e) {
-            System.out.println("Players File invalid, Exiting...");
-        }
+        assertDoesNotThrow(() -> players = new MockPlayers());
+        manager = new MockManager();
     }
 
     @BeforeEach
     void before() {
-        view.injectInput("user_test\nload\n");
-        game = new Game(players, manager, view);
-        game.setup();
+        prompt = new InputPrompt(new Scanner("user_test\nload\n"));
+        game = new Game(players, manager, prompt);
+        game.setupPlayer();
+        game.setupCryptogram();
         System.setOut(new PrintStream(output));
     }
 
@@ -48,10 +45,10 @@ public class EnterALetterTests {
     public void PlayersMapsALetterToAKeyThatDoesntExist() {
         String[] input = {"p", "!"};
 
-        game.enterLetter(input);
+        game.executeCommand(input);
         assertEquals(">> The value you're trying to map to, is not present in this cryptogram.\n" +
                 ">> Try again with a different value.", output.toString().trim());
-        assertNotEquals(game.getCryptogram().getLetter(input[0]), input[1]);
+        assertNotEquals(game.getCryptogram().getLetterFromSolution(input[0]), input[1]);
     }
 
     @Test
@@ -62,7 +59,7 @@ public class EnterALetterTests {
 
         //When the player identifies a value to replace with a letter
         String[] input = {"e", "b"};
-        game.enterLetter(input);
+        game.executeCommand(input);
 
         //Then the letter is mapped to that value and is filled in for all instances in the cryptogram
         assertEquals(game.getCryptogram().getSolution().get(input[0]), input[1]);
@@ -80,15 +77,15 @@ public class EnterALetterTests {
 
         // when a player select a value to which they already have mapped
         String[] userInput = {"p", "a"};
-        view.injectInput("no");
-        game.enterLetter(userInput);
+        prompt.injectInput("no");
+        game.executeCommand(userInput);
 
         // they are asked if they want to remap a letter
         assertEquals(">> This value is already mapped to. Do you want to override this mapping?",
                 output.toString().trim());
 
         // if no, letters remain
-        assertNotEquals(game.getCryptogram().getLetter(userInput[1]), userInput[0]);
+        assertNotEquals(game.getCryptogram().getLetterFromSolution(userInput[1]), userInput[0]);
 
         // stats are not updated
         assertEquals(game.getPlayer().getTotalGuesses(), totalGuesses);
@@ -101,15 +98,15 @@ public class EnterALetterTests {
 
         // when a player select a value to which they already have mapped
         String[] userInput = {"p", "a"};
-        view.injectInput("yes");
-        game.enterLetter(userInput);
+        prompt.injectInput("yes");
+        game.executeCommand(userInput);
 
         // they are asked if they want to remap a letter
         assertEquals(">> This value is already mapped to. Do you want to override this mapping?",
                 output.toString().trim());
 
         // if yes, letters remain
-        assertEquals(game.getCryptogram().getLetter(userInput[1]), userInput[0]);
+        assertEquals(game.getCryptogram().getLetterFromSolution(userInput[1]), userInput[0]);
 
         // stats are updated
         assertEquals(game.getPlayer().getTotalGuesses(), totalGuesses+1);
@@ -122,27 +119,27 @@ public class EnterALetterTests {
         String[] userInput = {"t", "b"};
 
         // it shouldn't be a mapping already
-        game.enterLetter(userInput);
+        game.executeCommand(userInput);
         assertTrue(output.toString().contains("The letter you are trying to use, has already been used."));
-        assertNotEquals(game.getCryptogram().getLetter(userInput[1]), userInput[0]);
+        assertNotEquals(game.getCryptogram().getLetterFromSolution(userInput[1]), userInput[0]);
     }
 
     @Test
     public void PlayerEnterAllLettersSuccessfully() {
         // when a player enters all letters correctly
-        game.enterLetter(new String[]{"e", "b"});
-        game.enterLetter(new String[]{"s", "c"});
+        assertFalse(game.executeCommand(new String[]{"e", "b"}));
+        assertTrue(game.executeCommand(new String[]{"s", "c"}));
         // the game is finished
-        assertTrue(game.isGameFinishedRoutine());
         assertTrue(output.toString().contains(">> Congratulations!!! You have successfully completed this cryptogram\n" +
                 ">> Try again with a different one now."));
     }
 
     @Test
     public void PlayerEntersLastLetterUnsuccessfully() {
-        game.enterLetter(new String[]{"e", "b"});
-        game.enterLetter(new String[]{"o", "c"});
-        assertFalse(game.isGameFinishedRoutine());
+        // when a player enters all letters correctly
+        assertFalse(game.executeCommand(new String[]{"e", "b"}));
+        assertFalse(game.executeCommand(new String[]{"o", "c"}));
+        // the game is not finished
         assertTrue(output.toString().contains(">> Somethings is off here. Undo some letters to map them again."));
 
     }

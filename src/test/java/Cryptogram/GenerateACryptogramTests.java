@@ -1,71 +1,84 @@
-//package Cryptogram;
-//
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Nested;
-//import org.junit.jupiter.api.Test;
-//
-//import java.io.*;
-//import java.util.Arrays;
-//import java.util.Collections;
-//import java.util.List;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//public class GenerateACryptogramTests {
-//
-//    private Game game;
-//    private final List<String> lettersAlphabet = Arrays.asList("abcdefghijklmnopqrstuvwxyz".split(""));
-//    private final String[] possibleIntsArray = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
-//            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
-//            "21", "22", "23", "24", "25", "26"};
-//    private final List<String> numbersAlphabet = Arrays.asList(possibleIntsArray);
-//
-//    @Nested
-//    class PhraseFileExists {
-//        @BeforeEach
-//        public void setup () {
-//        assertDoesNotThrow(() -> game = new Game("abc"));
-//        assertDoesNotThrow(() -> game.generateCryptogram("letters"));
-//    }
-//
-//
-//        @Test
-//        public void playerRequestsLettersCryptogram () {
-//
-//            //if player requests letters cryptogram
-//            assertDoesNotThrow(() -> game.generateCryptogram("lettres"));
-//
-//            List<String> actual = Arrays.asList(game.getCryptogram().getCryptogramAlphabet().values().toArray(new String[0]));
-//            // they get a cryptogram which contains only letters
-//            assertFalse(Collections.disjoint(actual, lettersAlphabet));
-//            assertTrue(Collections.disjoint(actual, numbersAlphabet));
-//
+package Cryptogram;
+
+import org.junit.jupiter.api.*;
+
+import java.io.*;
+import java.util.Scanner;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class GenerateACryptogramTests {
+
+    private final ByteArrayOutputStream output = new ByteArrayOutputStream();
+    private Game game;
+    private static MockPlayers players;
+    private static CryptogramManager manager;
+    private static InputPrompt prompt;
+
+    @BeforeAll
+    static void setup() {
+//        try {
+//            players = new MockPlayers();
+//            manager = new CryptogramManager();
+//            prompt = new InputPrompt(new Scanner(""));
+//        } catch (IOException e) {
+//            System.out.println("Players File invalid, Exiting...");
 //        }
-//
-//        @Test
-//        public void playerRequestsNumbersCryptogram () {
-//
-//            // when the player request numbers cryptogram
-//            assertDoesNotThrow(() -> game.generateCryptogram("numbers"));
-//
-//            List<String> actual = Arrays.asList(game.getCryptogram().getCryptogramAlphabet().values().toArray(new String[0]));
-//            // they get a cryptogram which contains only numbers
-//            assertFalse(Collections.disjoint(actual, numbersAlphabet));
-//            assertTrue(Collections.disjoint(actual, lettersAlphabet));
-//        }
-//    }
-//
-//    @Test
-//    public void playerRequestsCryptogramButNoPhrasesStored() {
-//        assertDoesNotThrow(() -> game = new Game("abc"));
-//        File file = new File("Resources/CryptogramPhrases");
-//        if (file.isDirectory()){
-//            if (file.list().length == 0) {
-//                assertThrows(IOException.class, () -> game.generateCryptogram("letters"));
-//            }
-//        } else {
-//            assertThrows(IOException.class, () -> game.generateCryptogram("letters"));
-//        }
-//    }
-//
-//}
+        assertDoesNotThrow(() -> players = new MockPlayers());
+        assertDoesNotThrow(() -> manager = new CryptogramManager());
+        prompt = new InputPrompt(new Scanner(""));
+    }
+
+    @BeforeEach
+    void before() {
+        System.setOut(new PrintStream(output));
+        game = new Game(players, manager, prompt);
+    }
+
+    @AfterEach
+    void after() {
+        System.setOut(System.out);
+    }
+
+    @Test
+    public void playerRequestsLettersCryptogramAtStart() {
+        // when there are phrases stored
+        //if player requests letters cryptogram
+        prompt.injectInput("user_test\nnew letters\n");
+        game.setupPlayer();
+        assertFalse(game.setupCryptogram());
+
+        // they get a cryptogram based on letters
+        assertEquals(LettersCryptogram.class, game.getCryptogram().getClass());
+    }
+
+    @Test
+    public void playerRequestsNumbersCryptogram() {
+        // when there are phrases stored
+        // if player requests letters cryptogram
+        prompt.injectInput("user_test\nnew numbers\n");
+        game.setupPlayer();
+        assertFalse(game.setupCryptogram());
+
+        // they get a cryptogram based on letters
+        assertEquals(NumbersCryptogram.class, game.getCryptogram().getClass());
+    }
+
+    @Test
+    public void playerRequestsCryptogramButNoPhrasesStored() {
+
+        CryptogramManager newManager = new CryptogramManager("PlayerFiles", "NoPhrasesHere");
+
+        // when there are no phrases stored
+        // if player requests any cryptogram
+        game = new Game(players, newManager, prompt);
+        prompt.injectInput("user_test\nnew letters\n");
+        game.setupPlayer();
+        assertTrue(game.setupCryptogram());
+
+        // error message is displayed and the game quits
+        assertTrue(output.toString().contains("Cryptograms file doesn't exists, Exiting..."));
+
+    }
+
+}

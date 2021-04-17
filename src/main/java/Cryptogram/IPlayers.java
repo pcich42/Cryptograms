@@ -1,13 +1,13 @@
 package Cryptogram;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface IPlayers {
     void addPlayer(String username);
 
     Player getPlayer(String username);
 
-    void savePlayers();
+    void savePlayerDetails();
 
-    HashMap<Player, Integer> getAllPlayersCompletedGames();
+    Map<Player, Integer> getAllPlayersCompletedGames();
 }

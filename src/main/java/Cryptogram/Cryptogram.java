@@ -3,12 +3,13 @@ package Cryptogram;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Cryptogram {
 
     // a map from real letter to crypto value
-    private final HashMap<String, String> alphabet;
-    private HashMap<String, String> solution;
+    private final Map<String, String> alphabet;
+    private Map<String, String> solution;
     private final String phrase;
 
     /**
@@ -25,7 +26,7 @@ public class Cryptogram {
      * generate constructor
      * @param phrase path to the file
      */
-    public Cryptogram(String phrase, HashMap<String, String> alphabet, HashMap<String, String> solution) {
+    public Cryptogram(String phrase, Map<String, String> alphabet, Map<String, String> solution) {
         this.phrase = phrase;
         this.alphabet = alphabet;
         this.solution = solution;
@@ -34,45 +35,31 @@ public class Cryptogram {
     /**
      * maps real letters to crypto values
      */
-    private HashMap<String, String> generateAlphabet() {
-        HashMap<String, String> alphabet = new HashMap<>();
-        ArrayList<String> possibleValues = getPossibleValues();
+    private Map<String, String> generateAlphabet() {
+        List<String> possibleValues = getPossibleValues();
 
+        return phrase.chars()
+                .distinct()
+                .mapToObj((cha) -> (char) cha)
+                .collect(Collectors.toMap(
+                        String::valueOf, (Character cha) -> popRandomValue(possibleValues))
+                );
+    }
+
+    private String popRandomValue(List<String> listOfValues) {
         Random r = new Random();
-        for (char c : phrase.toCharArray()) {
-            if (!alphabet.containsKey(String.valueOf(c)) && c != ' ') {
-                int index = r.nextInt(possibleValues.size());
-                String cryptoValue = possibleValues.get(index);
-                alphabet.put(String.valueOf(c), cryptoValue);
-                possibleValues.remove(index);
-            }
-        }
+        int index = r.nextInt(listOfValues.size());
+        return listOfValues.remove(index);
+    }
+
+    public Map<String, String> getCryptogramAlphabet() {
         return alphabet;
     }
 
-    /**
-     * a getter for cryptogramAlphabet
-     *
-     * @return a mapping from real letter to crypto value
-     */
-    public HashMap<String, String> getCryptogramAlphabet() {
-        return alphabet;
-    }
-
-    /**
-     * a getter for solution
-     *
-     * @return a mapping from real letter to crypto value
-     */
-    public HashMap<String, String> getSolution() {
+    public Map<String, String> getSolution() {
         return solution;
     }
 
-    /**
-     * Getter for the phrase
-     *
-     * @return string with a phrase
-     */
     public String getPhrase() {
         return phrase;
     }
@@ -90,34 +77,15 @@ public class Cryptogram {
         solution.put(guess, valueToMap);
     }
 
-    /**
-     * Checks if a crypto value already has a guess
-     *
-     * @param valueToMap crypto value to check for
-     * @return true if this value already has a letter mapped to it
-     */
-    public boolean isAlreadyMapped(String valueToMap) {
-        return solution.containsValue(valueToMap);
+    public boolean valueHasMapping(String value) {
+        return solution.containsValue(value);
     }
 
-
-    /**
-     * Checks if a letter is already used in another mapping
-     *
-     * @param guess letter to check
-     * @return true is letter is used in another mapping
-     */
     public boolean isLetterAlreadyUsed(String guess) {
         return solution.containsKey(guess);
     }
 
-    /**
-     * Checks if a crypto value is in the alphabet
-     *
-     * @param valueToMap crypto value to check for
-     * @return true if value is in the alphabet
-     */
-    public boolean valueInAlphabet(String valueToMap) {
+    public boolean isValueInAlphabet(String valueToMap) {
         return (alphabet.containsValue(valueToMap));
     }
 
@@ -133,27 +101,13 @@ public class Cryptogram {
         return solution.equals(alphabet);
     }
 
-    /**
-     * Checks if a letter mapping is correct
-     *
-     * @param guess      players real letter guess
-     * @param valueToMap a value to map the letter to
-     * @return true if letter was correct
-     */
     public boolean isGuessCorrect(String guess, String valueToMap) {
-        if (alphabet.containsKey(guess)) {
-            return valueToMap.equals(alphabet.get(guess));
-        } else {
-            return false;
-        }
+        return alphabet.containsKey(guess) && valueToMap.equals(alphabet.get(guess));
     }
 
-    /**
-     * fills the correct solution in
-     */
     public void fillSolution() {
         solution = new HashMap<>();
-        for (Map.Entry<String, String> entry : alphabet.entrySet()) {
+        for (var entry : alphabet.entrySet()) {
             solution.put(entry.getKey(), entry.getValue());
         }
     }
@@ -196,10 +150,10 @@ public class Cryptogram {
         return frequenciesFormatted.toString();
     }
 
-    public String getLetter(String value) {
-        if(solution.containsValue(value)){
-            for(String key : solution.keySet()) {
-                if (solution.get(key).equals(value)) {
+    private String getRealLetter(Map<String, String> map, String value) {
+        if(map.containsValue(value)){
+            for(String key : map.keySet()) {
+                if (map.get(key).equals(value)) {
                     return key;
                 }
             }
@@ -207,12 +161,13 @@ public class Cryptogram {
         return null;
     }
 
-    public static String getEnglishFrequencies() {
-        return  "a:8.12, b:1.49, c:2.71, d:4.32, e:12.02, f:2.30,\n" +
-                "g:2.03, h:5.92, i:7.31, j:0.10, k:0.69, l:3.98,\n" +
-                "m:2.61, n:6.95, o:7.68, p:1.82, q:0.11, r:6.02,\n" +
-                "s:6.28, t:9.10, u:2.88, v:1.11, w:2.09, x:0.17,\n" +
-                "y:2.11, z:0.07";
+    public String getLetterFromSolution(String value) {
+        return getRealLetter(solution, value);
     }
+
+    public String getLetterFromAlphabet(String value) {
+        return getRealLetter(alphabet, value);
+    }
+
 
 }
