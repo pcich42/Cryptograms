@@ -1,7 +1,8 @@
-package Cryptogram;
+package Cryptogram.IntegrationTests;
+
+import Cryptogram.*;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,29 +13,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LoadACryptogramTests {
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
-    private static InputPrompt prompt;
-    private static Game game;
-    private static MockPlayers players;
-    private static CryptogramManager manager;
+    private Application app;
+    private InputPrompt prompt;
     private static final String path = "TestGameFiles";
 
-    @BeforeAll
-    static void setup() {
-        assertDoesNotThrow(() -> players = new MockPlayers());
-        assertDoesNotThrow(() -> manager = new CryptogramManager(path, "CryptogramPhrases"));
-        prompt = new InputPrompt(new Scanner(""));
+    private void testBody(String[] input, String expectedOutput) {
+
+        prompt.injectInput(input);
+        app.run();
+
+        assertTrue(output.toString().contains(expectedOutput));
     }
 
     @BeforeEach
     void before() {
         System.setOut(new PrintStream(output));
-        game = new Game(players, manager, prompt);
+
+        IPlayers players = new MockPlayers();
+        ICryptogramManager manager = new CryptogramManager(path, "CryptogramPhrases");
+        View view = new View();
+
+        prompt = new InputPrompt(new Scanner(""));
+        app = new Application(players, manager, view, prompt);
+
     }
 
     @AfterEach
     void after() {
         System.setOut(System.out);
     }
+
 
     /**
      * Tests if loading cryptogram works
@@ -45,13 +53,17 @@ public class LoadACryptogramTests {
         File file = new File(path + "/PlayerGameFiles/test_userGame.txt");
         assertTrue(file.exists());
 
-        // when the player wants to load the game
-        prompt.injectInput("test_user\nload\n");
+        String[] input = {
+                "test_user",
+                "load",
+                "exit",
+                "no",
+                "exit",
+        };
 
-        // it is loaded
-        game.setupPlayer();
-        assertFalse(game.setupCryptogram());
-        assertNotNull(game.getCryptogram());
+        String outputString = ">> Please enter a mapping in format <letter><space><cryptogram value>:";
+
+        testBody(input, outputString);
 
     }
 
@@ -64,14 +76,15 @@ public class LoadACryptogramTests {
         File file = new File(path + "/PlayerGameFiles/test_user1Game.txt");
         assertFalse(file.exists());
 
-        // when the player wants to load the game
-        prompt.injectInput("test_user1\nload\nexit");
+        String[] input = {
+                "test_user1",
+                "load",
+                "exit",
+        };
 
-        // no game is loaded
-        game.setupPlayer();
-        assertTrue(game.setupCryptogram());
-        assertNull(game.getCryptogram());
-        assertTrue(output.toString().contains(">> No game saved. Save a game using 'save' before loading or type: new <[letters]/numbers> - to create a new cryptogram."));
+        String outputString = ">> No game saved. Save a game using 'save' before loading or type: new <[letters]/numbers> - to create a new cryptogram.";
+
+        testBody(input, outputString);
     }
 //
 //    @Test

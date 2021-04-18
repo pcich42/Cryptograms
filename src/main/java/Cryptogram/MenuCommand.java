@@ -4,4 +4,6 @@ public interface MenuCommand {
 
     void perform();
 
+    Game getGame();
+
 }

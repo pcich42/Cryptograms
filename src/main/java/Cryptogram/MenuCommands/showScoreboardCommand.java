@@ -52,4 +52,8 @@ public class showScoreboardCommand implements GameCommand, MenuCommand {
             view.displayMessage("No players in the scoreboard.");
         }
     }
+
+    public Game getGame() {
+        return null;
+    }
 }

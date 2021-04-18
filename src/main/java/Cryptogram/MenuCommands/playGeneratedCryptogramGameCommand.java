@@ -1,6 +1,5 @@
 package Cryptogram.MenuCommands;
 
-import Cryptogram.MenuCommand;
 import Cryptogram.Cryptogram;
 import Cryptogram.ICryptogramManager;
 import Cryptogram.Player;
@@ -9,7 +8,6 @@ import Cryptogram.View;
 import Cryptogram.InputPrompt;
 
 import java.io.IOException;
-import java.util.Random;
 
 public class playGeneratedCryptogramGameCommand extends newGameCommand {
 
@@ -27,9 +25,9 @@ public class playGeneratedCryptogramGameCommand extends newGameCommand {
 
     @Override
     protected Cryptogram requestCryptogram() {
-        int index = (new Random()).nextInt(15) + 1;
+
         try {
-            Cryptogram cryptogram = manager.generateCryptogram(getCryptogramType(input), "quote" + index + ".txt");
+            Cryptogram cryptogram = manager.generateCryptogram(getCryptogramType(input));
             player.incrementCryptogramsPlayed();
             return cryptogram;
         } catch (IOException ioException) {

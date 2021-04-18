@@ -8,15 +8,21 @@ import java.util.stream.Collectors;
 public class Players implements IPlayers {
 
     protected Map<String, Player> allPlayers;
-    final private File playersFile;
+    private final File playersFile;
+    private boolean isInstantiated;
 
-    public Players(String path) throws IOException {
+    public Players(String path) {
         this.playersFile = new File(path);
-        this.playersFile.createNewFile();
-        this.allPlayers = getPlayersFromFile();
+        try {
+            this.playersFile.createNewFile();
+            this.allPlayers = getPlayersFromFile();
+            this.isInstantiated = true;
+        } catch (IOException e) {
+            this.isInstantiated = false;
+        }
     }
 
-    public Players() throws IOException {
+    public Players() {
         this("GameFiles/player_data.txt");
     }
 
@@ -90,6 +96,11 @@ public class Players implements IPlayers {
                 .collect(Collectors.toMap(
                         (Player player) -> player,
                         (Player player) -> player.getCryptogramsCompleted()));
+    }
+
+    @Override
+    public boolean isInstantiated() {
+        return isInstantiated;
     }
 
 }

@@ -2,7 +2,6 @@ package Cryptogram;
 
 import Cryptogram.MenuCommands.*;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -11,11 +10,10 @@ import java.util.function.Supplier;
 public class Application {
 
     private Player player;
-    private IPlayers playerList;
+    private final IPlayers playerList;
     private final ICryptogramManager manager;
     private final InputPrompt prompt;
     private final View view;
-    private boolean instantiated;
 
     public Application(IPlayers playerList,
                        ICryptogramManager manager,
@@ -25,21 +23,15 @@ public class Application {
         this.manager = manager;
         this.prompt = prompt;
         this.view = view;
-        this.instantiated = true;
     }
 
     public Application() {
-        this(null,
-                new CryptogramManager(),
-                new View(),
-                new InputPrompt(new Scanner(System.in)));
-        try {
-            this.playerList = new Players();
-            this.instantiated = true;
-        } catch (IOException e) {
-            view.displayMessage("Players File invalid, Exiting...");
-            this.instantiated = false;
-        }
+        this(
+            new Players(),
+            new CryptogramManager(),
+            new View(),
+            new InputPrompt(new Scanner(System.in))
+        );
     }
 
     protected Player fetchPlayer() {
@@ -54,11 +46,11 @@ public class Application {
     }
 
     public void run() {
-        if(!instantiated){
+        if(!playerList.isInstantiated()){
             return;
         }
 
-        player = fetchPlayer();
+        setUpPlayer();
         view.displayHelp();
         String[] input;
         while (!(input = prompt.getInput("Choose what do you want to do next."))[0].contains("exit")) {
@@ -67,8 +59,14 @@ public class Application {
         playerList.savePlayerDetails();
     }
 
-    protected void executeMenuCommand(String[] input) {
-        fetchCommand(input).perform();
+    protected MenuCommand executeMenuCommand(String[] input) {
+        MenuCommand command = fetchCommand(input);
+        command.perform();
+        return command;
+    }
+
+    protected void setUpPlayer() {
+        this.player = fetchPlayer();
     }
 
     private MenuCommand fetchCommand(String[] input) {

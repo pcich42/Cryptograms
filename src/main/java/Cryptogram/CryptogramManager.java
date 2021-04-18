@@ -3,6 +3,7 @@ package Cryptogram;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class CryptogramManager implements ICryptogramManager {
 
@@ -19,7 +20,9 @@ public class CryptogramManager implements ICryptogramManager {
     }
 
     @Override
-    public Cryptogram generateCryptogram(String type, String path) throws IOException {
+    public Cryptogram generateCryptogram(String type) throws IOException {
+        int index = (new Random()).nextInt(15) + 1;
+        String path = "quote" + index + ".txt";
         try {
             String phrase = loadPhraseFromFile(getClass().getClassLoader().getResource(quotesDirectory + "/" + path).getPath());
             Cryptogram cryptogram;

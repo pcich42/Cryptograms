@@ -1,4 +1,4 @@
-package Cryptogram;
+package Cryptogram.UnitTests;
 
 import Cryptogram.Cryptogram;
 import Cryptogram.CryptogramManager;

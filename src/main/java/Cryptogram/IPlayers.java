@@ -3,6 +3,7 @@ package Cryptogram;
 import java.util.Map;
 
 public interface IPlayers {
+
     void addPlayer(String username);
 
     Player getPlayer(String username);
@@ -10,4 +11,6 @@ public interface IPlayers {
     void savePlayerDetails();
 
     Map<Player, Integer> getAllPlayersCompletedGames();
+
+    boolean isInstantiated();
 }

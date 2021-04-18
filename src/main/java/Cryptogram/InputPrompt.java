@@ -1,5 +1,6 @@
 package Cryptogram;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class InputPrompt {
@@ -65,8 +66,10 @@ public class InputPrompt {
         return line.split(" ");
     }
 
-    public void injectInput(String input) {
+    public void injectInput(String[] input) {
+
         scanner.close();
-        scanner = new Scanner(input);
+        String result = Arrays.stream(input).reduce((String acc, String next) -> acc + "\n" + next ).get();
+        scanner = new Scanner(result);
     }
 }

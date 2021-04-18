@@ -52,7 +52,7 @@ public class Game {
         // add new game commands here
 
         commands.put("undo", () -> new undoLetterCommand(input, cryptogram, view));
-        commands.put("save", () -> new saveGameCommand(cryptogram, player, manager, prompt));
+        commands.put("save", () -> new saveGameCommand(cryptogram, player, manager, prompt, view));
         commands.put("solution", () -> new showSolutionCommand(cryptogram, view));
         commands.put("scores", () -> new showScoreboardCommand(playerList, view));
         commands.put("frequencies", () -> new showFrequenciesCommand(cryptogram, view));

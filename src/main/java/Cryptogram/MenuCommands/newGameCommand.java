@@ -16,6 +16,7 @@ public abstract class newGameCommand implements MenuCommand {
     protected ICryptogramManager manager;
     protected View view;
     protected InputPrompt prompt;
+    protected Game game;
 
     public newGameCommand(
             Player player,
@@ -33,11 +34,17 @@ public abstract class newGameCommand implements MenuCommand {
 
     public void perform() {
         Cryptogram cryptogram = requestCryptogram();
-        Game game = new Game(player, cryptogram, manager, players, prompt, view);
-        game.play();
-        players.savePlayerDetails();
+        if(cryptogram != null) {
+            game = new Game(player, cryptogram, manager, players, prompt, view);
+            game.play();
+            players.savePlayerDetails();
+        }
     }
 
     protected abstract Cryptogram requestCryptogram();
 
+    @Override
+    public Game getGame() {
+        return this.game;
+    }
 }

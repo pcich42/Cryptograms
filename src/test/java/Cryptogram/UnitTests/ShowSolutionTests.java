@@ -1,4 +1,4 @@
-//package Cryptogram;
+package Cryptogram.UnitTests;//package Cryptogram;
 //
 //import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.Test;

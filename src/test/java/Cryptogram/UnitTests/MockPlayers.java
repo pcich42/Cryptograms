@@ -1,4 +1,7 @@
-package Cryptogram;
+package Cryptogram.UnitTests;
+
+import Cryptogram.Player;
+import Cryptogram.Players;
 
 import java.util.HashMap;
 

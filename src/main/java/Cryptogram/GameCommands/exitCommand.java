@@ -36,7 +36,7 @@ public class exitCommand implements GameCommand {
     private void askToSaveCurrentGame() {
         view.displayMessage("Do you wish to save before you exit?");
         if (prompt.confirmChoice()) {
-            GameCommand command = new saveGameCommand(cryptogram, player, manager, prompt);
+            GameCommand command = new saveGameCommand(cryptogram, player, manager, prompt, view);
             command.execute();
         }
     }

@@ -1,4 +1,4 @@
-//package Cryptogram;
+package Cryptogram.UnitTests;//package Cryptogram;
 //
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
