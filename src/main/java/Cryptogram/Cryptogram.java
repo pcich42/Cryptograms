@@ -69,11 +69,11 @@ public class Cryptogram {
     }
 
     public void remapLetters(String guess, String valueToMap) {
-        for (String key : solution.keySet())
-            if (solution.get(key).equals(valueToMap)) {
-                solution.remove(key);
-                break;
-            }
+        solution.entrySet().stream()
+                .filter((entry) -> entry.getValue().equals(valueToMap))
+                .findFirst()
+                .ifPresent((entry) -> solution.remove(entry.getKey()));
+
         solution.put(guess, valueToMap);
     }
 
@@ -102,14 +102,12 @@ public class Cryptogram {
     }
 
     public boolean isGuessCorrect(String guess, String valueToMap) {
-        return alphabet.containsKey(guess) && valueToMap.equals(alphabet.get(guess));
+        return alphabet.containsKey(guess) && alphabet.get(guess).equals(valueToMap);
     }
 
     public void fillSolution() {
         solution = new HashMap<>();
-        for (var entry : alphabet.entrySet()) {
-            solution.put(entry.getKey(), entry.getValue());
-        }
+        for (var entry : alphabet.entrySet()) solution.put(entry.getKey(), entry.getValue());
     }
 
     public ArrayList<String> getPossibleValues() {
@@ -149,25 +147,5 @@ public class Cryptogram {
 
         return frequenciesFormatted.toString();
     }
-
-    private String getRealLetter(Map<String, String> map, String value) {
-        if(map.containsValue(value)){
-            for(String key : map.keySet()) {
-                if (map.get(key).equals(value)) {
-                    return key;
-                }
-            }
-        }
-        return null;
-    }
-
-    public String getLetterFromSolution(String value) {
-        return getRealLetter(solution, value);
-    }
-
-    public String getLetterFromAlphabet(String value) {
-        return getRealLetter(alphabet, value);
-    }
-
 
 }

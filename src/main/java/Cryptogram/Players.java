@@ -28,10 +28,7 @@ public class Players implements IPlayers {
 
     @Override
     public void addPlayer(String username) {
-        if (!allPlayers.containsKey(username)) {
-            Player player = new Player(username);
-            allPlayers.put(username, player);
-        }
+        if (!allPlayers.containsKey(username)) allPlayers.put(username, new Player(username));
     }
 
     @Override

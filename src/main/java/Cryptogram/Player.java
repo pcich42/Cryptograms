@@ -21,9 +21,7 @@ public class Player {
     }
 
     public double getAccuracy() {
-        if (correctGuesses == 0 && totalGuesses == 0) {
-            return 1;
-        }
+        if (correctGuesses == 0 && totalGuesses == 0) return 1;
         return correctGuesses * 1.0 / totalGuesses;
     }
 
@@ -33,9 +31,7 @@ public class Player {
      * @param isGuessCorrect boolean value of whether the guess was correct
      */
     public void updateAccuracy(Boolean isGuessCorrect) {
-        if (isGuessCorrect) {
-            correctGuesses++;
-        }
+        if (isGuessCorrect) correctGuesses++;
         totalGuesses++;
     }
 

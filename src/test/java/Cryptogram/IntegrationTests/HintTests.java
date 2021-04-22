@@ -89,7 +89,7 @@ class HintTests {
                 "a b c a \n" +
                 "Type help to list all available commands.\n" +
                 ">> Please enter a mapping in format <letter><space><cryptogram value>:\n" +
-                "The letter s replaced your wrong guess.\n" +
+                "The letter s is revealed.\n" +
                 "\n" +
                 "t _ s t \n" +
                 "a b c a ";

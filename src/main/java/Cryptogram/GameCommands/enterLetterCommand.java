@@ -1,7 +1,6 @@
 package Cryptogram.GameCommands;
 
 import Cryptogram.*;
-import Cryptogram.GameCommand;
 
 public class enterLetterCommand extends FinishableGameCommand {
 
@@ -16,25 +15,29 @@ public class enterLetterCommand extends FinishableGameCommand {
 
     @Override
     public boolean execute() {
-        if (!isInputValid(input)) {
-            return false;
-        }
+        if (!isInputValid(input)) return false;
 
         String guess = input[0];
         String valueToMap = input[1];
 
-        if (!cryptogram.valueHasMapping(valueToMap)) {
-            cryptogram.mapLetters(guess, valueToMap);
-            player.updateAccuracy(cryptogram.isGuessCorrect(guess, valueToMap));
-            return super.isFinished();
-        }
+        if (!cryptogram.valueHasMapping(valueToMap)) return mapGuessAndCheckIfFinished(guess, valueToMap);
+        else return askToRemapGuessAndCheckIfFinished(guess, valueToMap);
+    }
 
+    private boolean askToRemapGuessAndCheckIfFinished(String guess, String valueToMap) {
         view.displayMessage(">> This value is already mapped to. Do you want to override this mapping?");
+
         if (prompt.confirmChoice()) {
             cryptogram.remapLetters(guess, valueToMap);
             player.updateAccuracy(cryptogram.isGuessCorrect(guess, valueToMap));
         }
 
+        return super.isFinished();
+    }
+
+    private boolean mapGuessAndCheckIfFinished(String guess, String valueToMap) {
+        cryptogram.mapLetters(guess, valueToMap);
+        player.updateAccuracy(cryptogram.isGuessCorrect(guess, valueToMap));
         return super.isFinished();
     }
 
@@ -48,27 +51,35 @@ public class enterLetterCommand extends FinishableGameCommand {
      * @return returns true if inputPrompt is valid and ready to be passed to enterLetter
      */
     private boolean isInputValid(String[] input) {
-        if (!(input.length == 2 &&
-                input[0].length() == 1 &&
-                (input[1].length() == 1 || input[1].length() == 2))) {
-            view.displayMessage(">> Couldn't enter this mapping. Try again.");
-            return false;
-        }
+        if (!hasCorrectLength(input)) return false;
+        if (!valueIsInAlphabet(input[1])) return false;
+        if (guessIsAlreadyUsed(input[0])) return false;
 
-        String guess = input[0];
-        String valueToMap = input[1];
+        return true;
+    }
 
-        if (!cryptogram.isValueInAlphabet(valueToMap)) {
-            view.displayMessage(">> The value you're trying to map to, is not present in this cryptogram.\n" +
-                    ">> Try again with a different value.");
-            return false;
-        } else if (cryptogram.isLetterAlreadyUsed(guess)) {
-            view.displayMessage(">> The letter you are trying to use, has already been used.\n" +
-                    ">> Try a different one or erase that letter.");
-            return false;
-        } else {
-            return true;
-        }
+    private boolean guessIsAlreadyUsed(String guess) {
+        if (!cryptogram.isLetterAlreadyUsed(guess)) return false;
+
+        view.displayMessage(">> The letter you are trying to use, has already been used.\n" +
+                ">> Try a different one or erase that letter.");
+        return true;
+    }
+
+    private boolean valueIsInAlphabet(String valueToMap) {
+        if (cryptogram.isValueInAlphabet(valueToMap)) return true;
+
+        view.displayMessage(">> The value you're trying to map to, is not present in this cryptogram.\n" +
+                ">> Try again with a different value.");
+        return false;
+    }
+
+    private boolean hasCorrectLength(String[] input) {
+        if (input.length == 2 && input[0].length() == 1 &&
+                (input[1].length() == 1 || input[1].length() == 2)) return true;
+
+        view.displayMessage(">> Couldn't enter this mapping. Try again.");
+        return false;
     }
 
 }
