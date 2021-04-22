@@ -3,24 +3,14 @@ package Cryptogram;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Cryptogram {
 
     // a map from real letter to crypto value
-    private final Map<String, String> alphabet;
-    private Map<String, String> solution;
-    private final String phrase;
+    protected Map<String, String> alphabet;
+    protected Map<String, String> solution;
+    protected String phrase;
 
-    /**
-     * generate constructor
-     * @param phrase path to the file
-     */
-    public Cryptogram(String phrase) {
-        this.phrase = phrase;
-        this.solution = new HashMap<>();
-        this.alphabet = generateAlphabet();
-    }
 
     /**
      * generate constructor
@@ -32,24 +22,7 @@ public class Cryptogram {
         this.solution = solution;
     }
 
-    /**
-     * maps real letters to crypto values
-     */
-    private Map<String, String> generateAlphabet() {
-        List<String> possibleValues = getPossibleValues();
-
-        return phrase.chars()
-                .distinct()
-                .mapToObj((cha) -> (char) cha)
-                .collect(Collectors.toMap(
-                        String::valueOf, (Character cha) -> popRandomValue(possibleValues))
-                );
-    }
-
-    private String popRandomValue(List<String> listOfValues) {
-        Random r = new Random();
-        int index = r.nextInt(listOfValues.size());
-        return listOfValues.remove(index);
+    public Cryptogram() {
     }
 
     public Map<String, String> getCryptogramAlphabet() {
@@ -108,10 +81,6 @@ public class Cryptogram {
     public void fillSolution() {
         solution = new HashMap<>();
         for (var entry : alphabet.entrySet()) solution.put(entry.getKey(), entry.getValue());
-    }
-
-    public ArrayList<String> getPossibleValues() {
-        return null;
     }
 
     /**

@@ -1,47 +1,54 @@
 package Cryptogram;
 
-/**
- * The class responsible for user interaction - getting input and commands from the player
- */
 public class View {
 
     public void displayCryptogram(Cryptogram cryptogram) {
         System.out.println();
 
-        String decryptedPhrase = "";
-        String encryptedPhrase = "";
+        StringBuilder decryptedLine = new StringBuilder();
+        StringBuilder encryptedLine = new StringBuilder();
 
-        for (char value : cryptogram.getPhrase().toCharArray()) {
-            if (value == ' ') {
-                decryptedPhrase = decryptedPhrase.concat(" ");
-                encryptedPhrase = encryptedPhrase.concat(" ");
+        for (String guess : cryptogram.getPhrase().split("")) {
+            if (guess.equals(" ")) {
+                // two spaces
+                decryptedLine.append("  ");
+                encryptedLine.append("  ");
             } else {
-                // get length of the key and add that many spaces
-                String correctKey = cryptogram.getCryptogramAlphabet().get(String.valueOf(value));
-                String decryptedValue = "";
-                if (cryptogram.getSolution().containsValue(correctKey)) {
-                    for (String key : cryptogram.getSolution().keySet())
-                        if (cryptogram.getSolution().get(key).equals(correctKey)) {
-                            decryptedValue = key;
-                        }
-                } else {
-                    decryptedValue = "_";
-                }
+                String encryptedValue = cryptogram.getCryptogramAlphabet().get(guess);
+                String letterOrDash = getDecryptedLetterOrDash(cryptogram, encryptedValue);
 
-                String encryptedValue = cryptogram.getCryptogramAlphabet().get(String.valueOf(value));
-                if (encryptedValue.length() == 2) {
-                    decryptedPhrase = decryptedPhrase.concat(" ");
-                }
-                decryptedPhrase = decryptedPhrase.concat(decryptedValue);
-                encryptedPhrase = encryptedPhrase.concat(encryptedValue);
+                decryptedLine
+                        .append(letterOrDash)
+                        .append(" ");
+                encryptedLine
+                        .append(encryptedValue)
+                        .append(" ");
             }
-            decryptedPhrase = decryptedPhrase.concat(" ");
-            encryptedPhrase = encryptedPhrase.concat(" ");
         }
 
-        System.out.println(decryptedPhrase);
-        System.out.println(encryptedPhrase);
+        System.out.println(decryptedLine);
+        System.out.println(encryptedLine);
 
+    }
+
+    private String getDecryptedLetterOrDash(Cryptogram cryptogram, String encryptedValue) {
+        StringBuilder decryptedPhrase = new StringBuilder();
+
+        if (encryptedValue.length() == 2) decryptedPhrase.append(" ");
+
+        if (cryptogram.valueHasMapping(encryptedValue))
+            decryptedPhrase.append(getKey(cryptogram, encryptedValue));
+        else decryptedPhrase.append("_");
+
+        return decryptedPhrase.toString();
+    }
+
+    private String getKey(Cryptogram cryptogram, String encryptedValue) {
+        return cryptogram.getSolution().entrySet().stream()
+                .filter((entry) -> entry.getValue().equals(encryptedValue))
+                .findFirst()
+                .get()
+                .getKey();
     }
 
     public void displayMessage(String string) {
