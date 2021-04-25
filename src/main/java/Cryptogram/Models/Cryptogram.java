@@ -1,5 +1,10 @@
 package Cryptogram.Models;
 
+import Cryptogram.Exceptions.GuessAlreadyUsedException;
+import Cryptogram.Exceptions.ValueAlreadyMappedException;
+import Cryptogram.Exceptions.ValueNotInCryptogramException;
+import Cryptogram.Exceptions.GuessNotUsedException;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.*;
@@ -33,11 +38,19 @@ public class Cryptogram {
         return phrase;
     }
 
-    public void mapLetters(String guess, String valueToMap) {
+    public void mapLetters(String guess, String valueToMap) throws GuessAlreadyUsedException, ValueAlreadyMappedException, ValueNotInCryptogramException {
+        if (isLetterAlreadyUsed(guess))
+            throw new GuessAlreadyUsedException("Letter already used elsewhere");
+        if (valueHasMapping(valueToMap))
+            throw new ValueAlreadyMappedException("Value already has a mapping");
+        if (!isValueInAlphabet(valueToMap))
+            throw new ValueNotInCryptogramException("This value does not exist in the cryptogram");
+
         solution.put(guess, valueToMap);
     }
 
-    public void remapLetters(String guess, String valueToMap) {
+    public void remapLetters(String guess, String valueToMap) throws ValueNotInCryptogramException {
+        if (!solution.containsValue(valueToMap)) throw new ValueNotInCryptogramException("This value does not exist in the cryptogram");
         solution.entrySet().stream()
                 .filter((entry) -> entry.getValue().equals(valueToMap))
                 .findFirst()
@@ -51,7 +64,6 @@ public class Cryptogram {
     }
 
     public boolean isLetterAlreadyUsed(String guess) {
-
         return solution.containsKey(guess);
     }
 
@@ -59,7 +71,9 @@ public class Cryptogram {
         return (alphabet.containsValue(valueToMap));
     }
 
-    public void removeMapping(String remove) {
+    public void removeMapping(String remove) throws GuessNotUsedException {
+        if (!solution.containsKey(remove))
+            throw new GuessNotUsedException("This guess is not yet used");
         solution.remove(remove);
     }
 

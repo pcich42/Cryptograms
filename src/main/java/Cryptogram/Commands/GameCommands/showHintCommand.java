@@ -1,5 +1,8 @@
 package Cryptogram.Commands.GameCommands;
 
+import Cryptogram.Exceptions.GuessAlreadyUsedException;
+import Cryptogram.Exceptions.ValueAlreadyMappedException;
+import Cryptogram.Exceptions.ValueNotInCryptogramException;
 import Cryptogram.Models.Cryptogram;
 import Cryptogram.Models.Player;
 import Cryptogram.Views.View;
@@ -22,7 +25,7 @@ public class showHintCommand extends FinishableGameCommand {
     }
 
     private void remapWrongGuess(Map.Entry<String, String> entry) {
-        if(cryptogram.isLetterAlreadyUsed(entry.getKey())) cryptogram.removeMapping(entry.getKey());
+        if (cryptogram.isLetterAlreadyUsed(entry.getKey())) cryptogram.removeMapping(entry.getKey());
         cryptogram.mapLetters(entry.getKey(), entry.getValue());
         System.out.println("The letter " + entry.getKey() + " is revealed.");
     }

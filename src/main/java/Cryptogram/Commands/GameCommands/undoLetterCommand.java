@@ -1,5 +1,6 @@
 package Cryptogram.Commands.GameCommands;
 
+import Cryptogram.Exceptions.GuessNotUsedException;
 import Cryptogram.Interfaces.GameCommand;
 import Cryptogram.Models.Cryptogram;
 import Cryptogram.Views.View;
@@ -24,12 +25,12 @@ public class undoLetterCommand implements GameCommand {
         }
 
         String remove = input[1];
-        if (!cryptogram.isLetterAlreadyUsed(remove)) {
-            view.displayMessage(">> The letter you are trying to delete is not in play");
-            return false;
-        }
 
-        cryptogram.removeMapping(remove);
+        try {
+            cryptogram.removeMapping(remove);
+        } catch (GuessNotUsedException e) {
+            view.displayMessage(">> The letter you are trying to delete is not in play");
+        }
         return false;
     }
 
