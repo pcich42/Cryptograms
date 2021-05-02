@@ -55,7 +55,7 @@ public class ShowSolutionTests {
                 "user_test",
                 "load",
                 "solution",
-                "exit"
+                "exit",
         } ;
 
         String outputString =

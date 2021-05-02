@@ -91,10 +91,11 @@ public class Application {
     private MenuCommand fetchCommand(String[] input) {
         // supplier used to deffer initialization
         Map<String, Supplier<MenuCommand>> commands = new HashMap<>();
+        GameCommandSupplier gameCommands = new GameCommandSupplier();
 
         // register new menu commands here
-        commands.put("new", () -> new playGeneratedCryptogramGameCommand(player, playerList, manager, view, prompt, input));
-        commands.put("load", () -> new playLoadedCryptogramGameCommand(player, playerList, manager, view, prompt));
+        commands.put("new", () -> new playGeneratedCryptogramGameCommand(player, playerList, manager, view, prompt, input, gameCommands));
+        commands.put("load", () -> new playLoadedCryptogramGameCommand(player, playerList, manager, view, prompt, gameCommands));
 //        commands.put("login", () -> new changePlayerCommand(playerList));
         commands.put("scores", () -> new showScoreboardCommand(playerList, view));
 

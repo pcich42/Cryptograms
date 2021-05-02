@@ -5,7 +5,6 @@ import Cryptogram.Models.Player;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -34,23 +33,21 @@ public class Players implements IPlayers {
 
     public void loadPlayersFromFile() throws IOException {
 
-        if (!playersFile.exists()) {
-            throw new FileNotFoundException("Could not open file");
-        }
+        if (!playersFile.exists()) throw new FileNotFoundException("Could not open file");
         HashMap<String, Player> players = new HashMap<>();
         BufferedReader br = new BufferedReader(new FileReader(playersFile));
         String line;
         while ((line = br.readLine()) != null) {
             String[] tokens = line.split(",");
-            if (tokens.length == 5) loadPlayerIntoPlayers(tokens, players);
+            if (tokens.length == 5) createPlayerAndLoadIntoPlayers(tokens, players);
             else throw new IOException("File format invalid");
         }
         br.close();
         this.allPlayers = players;
     }
 
-    private void loadPlayerIntoPlayers(String[] tokens, Map<String, Player> players) {
-        Player player = new Player(tokens[0],            // username
+    private void createPlayerAndLoadIntoPlayers(String[] tokens, Map<String, Player> players) {
+        Player player = new Player(tokens[0],   // username
                 Integer.parseInt(tokens[1]),    // correct guesses
                 Integer.parseInt(tokens[2]),    // total guesses
                 Integer.parseInt(tokens[3]),    // games played
@@ -62,10 +59,8 @@ public class Players implements IPlayers {
     @Override
     public void savePlayerDetails() {
 
-        try {
-            PrintWriter writer = new PrintWriter(playersFile);
+        try (PrintWriter writer = new PrintWriter(playersFile)){
             for (Player player : allPlayers.values()) {
-
                 String str = player.getUsername() +
                         "," +
                         player.getCorrectGuesses() +
@@ -79,7 +74,6 @@ public class Players implements IPlayers {
                 writer.write(str);
 
             }
-            writer.close();
         } catch (IOException e) {
             System.out.println("Couldn't write to the file, sorry but all progress will be lost :( .");
         }
@@ -93,7 +87,7 @@ public class Players implements IPlayers {
                 .filter(player -> player.getCryptogramsCompleted() != 0)
                 .collect(Collectors.toMap(
                         (Player player) -> player,
-                        (Player player) -> player.getCryptogramsCompleted()));
+                        Player::getCryptogramsCompleted));
     }
 
 }

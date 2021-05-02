@@ -96,7 +96,7 @@ public class LoadACryptogramTests {
 //    public void corruptedFileCryptogram() {
 //        // when a player game file has been corrupted
 //        // when they request to load a game
-//        File file = new File("Resources/PlayerGameFiles/" + username + "Game.txt");
+//        File file = new File("Resources/PlayerGameFiles/" + username + "GameTests.txt");
 //        assertDoesNotThrow(() -> game.saveGameToFile(true));
 //        assertTrue(file.exists());
 //        try {

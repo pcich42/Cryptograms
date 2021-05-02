@@ -1,5 +1,6 @@
 package Cryptogram.Commands.MenuCommands;
 
+import Cryptogram.Controllers.GameCommandSupplier;
 import Cryptogram.Models.Cryptogram;
 import Cryptogram.Interfaces.ICryptogramManager;
 import Cryptogram.Models.Player;
@@ -18,8 +19,9 @@ public class playGeneratedCryptogramGameCommand extends newGameCommand {
                                               ICryptogramManager manager,
                                               View view,
                                               InputPrompt prompt,
-                                              String[] input) {
-        super(player, players, manager, view, prompt);
+                                              String[] input,
+                                              GameCommandSupplier commands) {
+        super(player, players, manager, view, prompt, commands);
         this.input = input;
     }
 

@@ -52,6 +52,7 @@ public class LetterCryptogramTests {
         cryptogram.mapLetters("h", "b");
         cryptogram.remapLetters("o", "b");
         assertEquals(cryptogram.getSolution().get("o"), "b");
+        assertNull(cryptogram.getSolution().get("h"));
     }
 
     @Test
@@ -61,6 +62,11 @@ public class LetterCryptogramTests {
         assertDoesNotThrow(() -> cryptogram.mapLetters("o", "c"));
         assertDoesNotThrow(() -> cryptogram.mapLetters("i", "f"));
         assertDoesNotThrow(() -> cryptogram.mapLetters("s", "a"));
+        assertEquals("b", cryptogram.getSolution().get("h"));
+        assertEquals("e", cryptogram.getSolution().get("t"));
+        assertEquals("c", cryptogram.getSolution().get("o"));
+        assertEquals("f", cryptogram.getSolution().get("i"));
+        assertEquals("a", cryptogram.getSolution().get("s"));
     }
 
     @Test
@@ -70,6 +76,8 @@ public class LetterCryptogramTests {
         assertThrows(GuessAlreadyUsedException.class, () -> cryptogram.mapLetters("h", "c"));
         assertThrows(GuessAlreadyUsedException.class, () -> cryptogram.mapLetters("u", "c"));
         assertThrows(GuessAlreadyUsedException.class, () -> cryptogram.mapLetters("u", "e"));
+        assertEquals("a", cryptogram.getSolution().get("u"));
+        assertEquals("b", cryptogram.getSolution().get("h"));
     }
 
     @Test
@@ -77,6 +85,7 @@ public class LetterCryptogramTests {
         assertThrows(ValueNotInCryptogramException.class, () -> cryptogram.mapLetters("h", "i"));
         assertThrows(ValueNotInCryptogramException.class, () -> cryptogram.mapLetters("h", "o"));
         assertThrows(ValueNotInCryptogramException.class, () -> cryptogram.mapLetters("p", "03"));
+        assertTrue(cryptogram.getSolution().isEmpty());
     }
 
     @Test
@@ -84,6 +93,28 @@ public class LetterCryptogramTests {
         cryptogram.mapLetters("h", "e");
         assertThrows(ValueAlreadyMappedException.class, () -> cryptogram.mapLetters("i", "e"));
         assertThrows(ValueAlreadyMappedException.class, () -> cryptogram.mapLetters("o", "e"));
+        assertEquals("e", cryptogram.getSolution().get("h"));
+        assertNull(cryptogram.getSolution().get("o"));
+    }
+    
+    @Test
+    void remappingDoesNotThrow() {
+        cryptogram.mapLetters("h", "e");
+        assertDoesNotThrow(() -> cryptogram.remapLetters("o", "e"));
+        assertFalse(cryptogram.isLetterAlreadyUsed("h"));
+        assertEquals("e", cryptogram.getSolution().get("o"));
+    }
+
+    @Test
+    void remappingNonToNonExistentValue_throws_ValueNotInCryptogram() {
+        assertThrows(ValueNotInCryptogramException.class, () -> cryptogram.remapLetters("o", "e"));
+        assertTrue(cryptogram.getSolution().isEmpty());
+    }
+
+    @Test
+    void isGuessCorrectTest() {
+        assertTrue(cryptogram.isGuessCorrect("t", "a"));
+        assertFalse(cryptogram.isGuessCorrect("u", "b"));
     }
 
 }

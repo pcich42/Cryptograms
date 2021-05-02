@@ -51,10 +51,13 @@ public class Cryptogram {
 
     public void remapLetters(String guess, String valueToMap) throws ValueNotInCryptogramException {
         if (!solution.containsValue(valueToMap)) throw new ValueNotInCryptogramException("This value does not exist in the cryptogram");
+
         solution.entrySet().stream()
                 .filter((entry) -> entry.getValue().equals(valueToMap))
                 .findFirst()
-                .ifPresent((entry) -> solution.remove(entry.getKey()));
+                .ifPresentOrElse((entry) -> solution.remove(entry.getKey()), () -> {
+                    throw new GuessNotUsedException("a");
+                });
 
         solution.put(guess, valueToMap);
     }
@@ -73,7 +76,7 @@ public class Cryptogram {
 
     public void removeMapping(String remove) throws GuessNotUsedException {
         if (!solution.containsKey(remove))
-            throw new GuessNotUsedException("This guess is not yet used");
+            throw new GuessNotUsedException("This guess does not exist");
         solution.remove(remove);
     }
 

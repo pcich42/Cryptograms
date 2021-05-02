@@ -14,12 +14,12 @@
 //
 //public class ScoreboardTests {
 //
-//    private Game game;
+//    private GameTests game;
 //    private final String username = "testUser";
 //
 //    @Test
 //    public void playersAvailable() {
-//        assertDoesNotThrow(() -> game = new Game(username));
+//        assertDoesNotThrow(() -> game = new GameTests(username));
 //        assertDoesNotThrow(() -> game.generateCryptogram("letters"));
 //        ArrayList<String> a = game.getScoreboard();
 //        int non_zero_successful_players = 0;
@@ -58,7 +58,7 @@
 //            fail();
 //        }
 //
-//        assertDoesNotThrow(() -> game = new Game(username));
+//        assertDoesNotThrow(() -> game = new GameTests(username));
 //        ArrayList<String> a = game.getScoreboard();
 //        assertEquals(a.size(), 0);
 //

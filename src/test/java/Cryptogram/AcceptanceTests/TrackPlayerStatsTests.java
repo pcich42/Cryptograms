@@ -13,12 +13,12 @@
 //
 //class TrackPlayerStatsTests {
 //
-//    private Game game;
+//    private GameTests game;
 //    private final String username = "abc";
 //
 //    @BeforeEach
 //    public void setUp() {
-//            assertDoesNotThrow(() -> game = new Game(username));
+//            assertDoesNotThrow(() -> game = new GameTests(username));
 //            assertDoesNotThrow(() -> game.generateCryptogram("letters"));
 //    }
 //
@@ -91,7 +91,7 @@
 //        assertDoesNotThrow(() -> game.loadGame());
 //        Assertions.assertEquals(2, game.getPlayer().getCryptogramsPlayed());
 //
-//        File file = new File("Resources/PlayerGameFiles/"+username+"Game.txt");
+//        File file = new File("Resources/PlayerGameFiles/"+username+"GameTests.txt");
 //        if (file.exists()){
 //            file.delete();
 //        }
