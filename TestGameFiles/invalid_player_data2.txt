@@ -1,5 +1,0 @@
-test_user,0,0,1,0,13
-test_user3,4,5,9,8,314
-test_user2,0,0,2,8,14151
-test_user1,11,21,7,6,1
-test_user4,0,0,0,0,af
