@@ -20,7 +20,8 @@ public class LettersCryptogram extends Cryptogram {
         Stream<Character> distinctCharactersOfPhrase = phrase
                 .chars()
                 .distinct()
-                .mapToObj((cha) -> (char) cha);
+                .mapToObj(cha-> (char) cha)
+                .filter(cha -> cha != ' ');
 
         return distinctCharactersOfPhrase
                 .collect(Collectors.toMap(String::valueOf, this::getRandomPossibleValue));

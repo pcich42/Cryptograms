@@ -11,7 +11,6 @@ import Cryptogram.Views.InputPrompt;
 import Cryptogram.Views.View;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
 public class GameCommandSupplier {

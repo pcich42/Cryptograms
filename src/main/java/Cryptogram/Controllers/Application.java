@@ -53,7 +53,7 @@ public class Application {
     }
 
     public void run() {
-        if (!loadPlayersAndCheckIfSuccessful()) return;
+        if (!loadPlayers()) return;
 
         player = fetchPlayer();
         view.displayMessage("Welcome " + player.getUsername() + "!") ;
@@ -70,7 +70,7 @@ public class Application {
         }
     }
 
-    private boolean loadPlayersAndCheckIfSuccessful() {
+    private boolean loadPlayers() {
         try {
             playerList.loadPlayersFromFile();
         } catch (FileNotFoundException notFoundException) {
@@ -96,10 +96,9 @@ public class Application {
         // register new menu commands here
         commands.put("new", () -> new playGeneratedCryptogramGameCommand(player, playerList, manager, view, prompt, input, gameCommands));
         commands.put("load", () -> new playLoadedCryptogramGameCommand(player, playerList, manager, view, prompt, gameCommands));
-//        commands.put("login", () -> new changePlayerCommand(playerList));
         commands.put("scores", () -> new showScoreboardCommand(playerList, view));
 
-        return commands.get(input[0]).get();
+        return commands.getOrDefault(input[0], () -> () -> view.displayMessage("Such command does not exist, please try again")).get();
     }
 
 }

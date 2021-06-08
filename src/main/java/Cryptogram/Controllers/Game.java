@@ -3,15 +3,10 @@ package Cryptogram.Controllers;
 import Cryptogram.Interfaces.GameCommand;
 import Cryptogram.Interfaces.ICryptogramManager;
 import Cryptogram.Interfaces.IPlayers;
-import Cryptogram.Commands.MenuCommands.showScoreboardCommand;
 import Cryptogram.Models.Cryptogram;
 import Cryptogram.Models.Player;
-import Cryptogram.Commands.GameCommands.*;
 import Cryptogram.Views.InputPrompt;
 import Cryptogram.Views.View;
-
-import java.util.*;
-import java.util.function.Supplier;
 
 public class Game {
 

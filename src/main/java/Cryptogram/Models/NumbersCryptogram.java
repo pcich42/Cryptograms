@@ -20,6 +20,7 @@ public class NumbersCryptogram extends Cryptogram {
         return phrase.chars()
                 .distinct()
                 .mapToObj((cha) -> (char) cha)
+                .filter(character -> !character.equals(' '))
                 .collect(Collectors.toMap(
                         String::valueOf, (Character cha) -> popRandomValue(possibleValues))
                 );

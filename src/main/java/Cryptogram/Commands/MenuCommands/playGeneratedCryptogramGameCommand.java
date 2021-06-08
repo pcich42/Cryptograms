@@ -27,7 +27,6 @@ public class playGeneratedCryptogramGameCommand extends newGameCommand {
 
     @Override
     protected Cryptogram requestCryptogram() {
-
         try {
             Cryptogram cryptogram = manager.generateCryptogram(getCryptogramType(input));
             player.incrementCryptogramsPlayed();

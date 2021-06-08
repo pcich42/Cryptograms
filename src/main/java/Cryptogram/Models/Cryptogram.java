@@ -16,7 +16,6 @@ public class Cryptogram {
     protected Map<String, String> solution;
     protected String phrase;
 
-
     public Cryptogram(String phrase, Map<String, String> alphabet, Map<String, String> solution) {
         this.phrase = phrase;
         this.alphabet = alphabet;
